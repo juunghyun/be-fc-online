@@ -1,0 +1,30 @@
+# JetBrains IDEs (IntelliJ)
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Build
+build/
+.gradle/
+bin/
+out/
+
+# Gradle
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Logs and temporary files
+*.log
+*~
+*.swp
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Security - VERY IMPORTANT!
+# 민감한 정보(DB 계정, JWT 비밀키 등)가 포함된 설정 파일
+application.yml
+application.yaml
+application.properties
