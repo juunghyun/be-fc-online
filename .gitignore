@@ -26,5 +26,8 @@ Thumbs.db
 # Security - VERY IMPORTANT!
 # 민감한 정보(DB 계정, JWT 비밀키 등)가 포함된 설정 파일
 application.yml
+# Local secret configuration
+application-local.yml
+application-prod.yml
 application.yaml
 application.properties
