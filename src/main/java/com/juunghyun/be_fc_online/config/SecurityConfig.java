@@ -5,6 +5,8 @@ import com.juunghyun.be_fc_online.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -27,32 +29,33 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // 1. REST API에 필요 없는 기능 비활성화
         http
-                .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
-                .formLogin(AbstractHttpConfigurer::disable) // formLogin 비활성화
-                .httpBasic(AbstractHttpConfigurer::disable) // httpBasic 비활성화
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션 사용 안함
+                // 1. 기본 설정 비활성화
+                .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-
-        // 2. URL별 접근 권한 설정
-        http
+                // 2. 경로별 인가(Authorization) 설정
                 .authorizeHttpRequests(authorize -> authorize
-                        // 아래 주소들은 로그인 없이도 접근 가능
                         .requestMatchers(
                                 "/",
-                                "/swagger-ui.html", // Swagger UI 페이지
-                                "/v3/api-docs/**",   // Swagger 문서 정보
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/api/v1/auth/**"   // 회원가입, 로그인 API
-                        ).permitAll()
-                        // 그 외 모든 주소는 인증(로그인)이 필요함
-                        .anyRequest().authenticated()
-                );
+                                "/api/v1/auth/**"
+                        ).permitAll() // 이 주소들은 모두 허용
+                        .anyRequest().authenticated() // 나머지 모든 요청은 인증 필요
+                )
 
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-
+                // 3. JWT 필터 등록
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
