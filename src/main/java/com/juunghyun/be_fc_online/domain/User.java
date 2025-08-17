@@ -40,6 +40,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private UserStatus status;
 
+    @Column(length = 255) // Refresh Token은 길어질 수 있으므로 길이를 넉넉하게 설정
+    private String refreshToken;
+
     @Builder
     public User(String email, String password, String nickname, UserRole role) {
         this.email = email;
@@ -47,6 +50,10 @@ public class User implements UserDetails {
         this.nickname = nickname;
         this.role = (role != null) ? role : UserRole.USER; // 생성 시 기본 역할은 USER
         this.status = UserStatus.ACTIVE; // 생성 시 기본 상태는 ACTIVE
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     // ============== UserDetails 인터페이스 구현 ============== //

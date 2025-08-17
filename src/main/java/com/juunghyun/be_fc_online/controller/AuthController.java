@@ -38,4 +38,11 @@ public class AuthController {
         TokenInfo tokenInfo = authService.login(requestDto.getEmail(), requestDto.getPassword()); // 로그인은 AuthService 호출
         return ResponseEntity.ok(tokenInfo);
     }
+
+    @Operation(summary = "로그아웃")
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        authService.logout();
+        return ResponseEntity.ok("정상적으로 로그아웃되었습니다.");
+    }
 }
