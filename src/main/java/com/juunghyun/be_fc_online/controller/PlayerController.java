@@ -1,15 +1,13 @@
 package com.juunghyun.be_fc_online.controller;
 
 import com.juunghyun.be_fc_online.domain.Player;
+import com.juunghyun.be_fc_online.dto.PlayerPriceResponseDto;
 import com.juunghyun.be_fc_online.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Player API", description = "선수 관련 API")
 @RestController
@@ -24,5 +22,15 @@ public class PlayerController {
     public ResponseEntity<Player> getPlayerDetails(@PathVariable Long playerId) {
         Player player = playerService.findById(playerId);
         return ResponseEntity.ok(player);
+    }
+
+    @Operation(summary = "선수 실시간 가격 조회", description = "spid와 강화 등급으로 선수의 실시간 가격을 크롤링하여 조회합니다.")
+    @GetMapping("/{spid}/price")
+    public ResponseEntity<PlayerPriceResponseDto> getPlayerPrice(
+            @PathVariable Long spid,
+            @RequestParam(name = "grade", defaultValue = "1") int enhancementLevel) {
+
+        PlayerPriceResponseDto priceDto = playerService.getRealTimePrice(spid, enhancementLevel);
+        return ResponseEntity.ok(priceDto);
     }
 }
