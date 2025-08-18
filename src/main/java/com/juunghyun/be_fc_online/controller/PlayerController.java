@@ -24,13 +24,13 @@ public class PlayerController {
         return ResponseEntity.ok(player);
     }
 
-    @Operation(summary = "선수 실시간 가격 조회", description = "spid와 강화 등급으로 선수의 실시간 가격을 크롤링하여 조회합니다.")
-    @GetMapping("/{spid}/price")
+    @Operation(summary = "선수 실시간 가격 조회", description = "playerId와 강화 등급으로 선수의 실시간 가격을 크롤링하여 조회합니다.")
+    @GetMapping("/{playerId}/price")
     public ResponseEntity<PlayerPriceResponseDto> getPlayerPrice(
-            @PathVariable Long spid,
+            @PathVariable Long playerId,
             @RequestParam(name = "grade", defaultValue = "1") int enhancementLevel) {
 
-        PlayerPriceResponseDto priceDto = playerService.getRealTimePrice(spid, enhancementLevel);
+        PlayerPriceResponseDto priceDto = playerService.getRealTimePrice(playerId, enhancementLevel);
         return ResponseEntity.ok(priceDto);
     }
 }
