@@ -5,6 +5,7 @@ import com.juunghyun.be_fc_online.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -51,6 +52,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/api/v1/auth/**"
                         ).permitAll() // 이 주소들은 모두 허용
+                        .requestMatchers(HttpMethod.GET, "/api/v1/players/**").permitAll()
                         .anyRequest().authenticated() // 나머지 모든 요청은 인증 필요
                 )
 
