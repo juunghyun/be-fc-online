@@ -4,6 +4,8 @@ import com.juunghyun.be_fc_online.domain.Player;
 import com.juunghyun.be_fc_online.dto.PlayerPriceResponseDto;
 import com.juunghyun.be_fc_online.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true) // 조회 기능이므로 읽기 전용으로 설정
@@ -27,7 +30,9 @@ public class PlayerService {
     }
 
 
+    @Cacheable(value = "playerPrice", key = "#spid + '_' + #enhancementLevel")
     public PlayerPriceResponseDto getRealTimePrice(Long spid, int enhancementLevel) {
+        log.info("넥슨 API를 호출하여 실시간 가격을 가져옵니다... spid: {}, grade: {}", spid, enhancementLevel);
         String url = "https://fconline.nexon.com/datacenter/PlayerPriceGraph";
 
         // 1. 헤더 설정: Form Data 형식으로 요청한다고 알림
