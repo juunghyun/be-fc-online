@@ -1,11 +1,15 @@
 package com.juunghyun.be_fc_online.service;
 
 import com.juunghyun.be_fc_online.domain.Player;
-import com.juunghyun.be_fc_online.dto.PlayerPriceResponseDto;
+import com.juunghyun.be_fc_online.domain.Team;
+import com.juunghyun.be_fc_online.dto.*;
 import com.juunghyun.be_fc_online.repository.PlayerRepository;
+import com.juunghyun.be_fc_online.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -22,11 +29,13 @@ import org.springframework.web.client.RestTemplate;
 public class PlayerService {
 
     private final PlayerRepository playerRepository;
+    private final TeamRepository teamRepository; // TeamRepository 주입
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public Player findById(Long playerId) {
-        return playerRepository.findById(playerId)
+    public PlayerDetailResponseDto findById(Long playerId) {
+        Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 선수를 찾을 수 없습니다. id=" + playerId));
+        return new PlayerDetailResponseDto(player);
     }
 
 
@@ -87,5 +96,25 @@ public class PlayerService {
             // 숫자 변환 중 에러 발생 시 0 반환
             return 0L;
         }
+    }
+
+    public PageResponseDto<PlayerResponseDto> searchPlayers(PlayerSearchConditionDto condition, Pageable pageable) {
+        // 이 부분은 기존과 동일합니다.
+        if (condition.getTeamNames() != null && !condition.getTeamNames().isEmpty()) {
+            List<Team> teams = teamRepository.findByNameIn(condition.getTeamNames());
+            if (teams.size() != condition.getTeamNames().size()) {
+                return new PageResponseDto<>(Page.empty()); // 빈 페이지를 DTO로 감싸서 반환
+            }
+            List<Long> teamIds = teams.stream().map(Team::getId).collect(Collectors.toList());
+            condition.setTeamIds(teamIds);
+        }
+
+        Page<Player> players = playerRepository.search(condition, pageable);
+
+        // Page<Player>를 Page<PlayerResponseDto>로 변환합니다.
+        Page<PlayerResponseDto> dtoPage = players.map(PlayerResponseDto::new);
+
+        // 최종적으로 PageResponseDto로 한번 더 감싸서 반환합니다.
+        return new PageResponseDto<>(dtoPage);
     }
 }

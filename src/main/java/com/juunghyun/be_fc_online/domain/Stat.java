@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class Stat {
 
     // total overall
-    private int overallrating;
+    private int overallRating;
 
     // Shooting Stats
     private int finishing;
@@ -60,5 +60,8 @@ public class Stat {
     private int gkKicking;
     private int gkReflexes;
     private int gkPositioning;
+
+    private int skillMoves;
+
 
 }
