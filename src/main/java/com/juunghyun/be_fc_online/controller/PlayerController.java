@@ -38,7 +38,7 @@ public class PlayerController {
         return ResponseEntity.ok(priceDto);
     }
 
-    @Operation(summary = "선수 검색", description = "...")
+    @Operation(summary = "선수 검색", description = "다양한 조건으로 선수를 검색합니다. 예: ?name=호날두&teamNames=레알 마드리드&nation=포르투갈")
     @GetMapping("/search")
     public ResponseEntity<PageResponseDto<PlayerResponseDto>> searchPlayers( // <-- 반환 타입 변경
         PlayerSearchConditionDto condition,
