@@ -23,13 +23,16 @@ public class Player {
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Career> careers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Favorite> favorites = new ArrayList<>();
+
 
     @Column(name = "player_name")
     private String playerName;
 
-    private int height;
-    private int weight;
-    private int salary;
+    private Integer height;
+    private Integer weight;
+    private Integer salary;
     private String season;
 
     @Embedded

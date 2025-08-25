@@ -21,10 +21,16 @@ public class PlayerController {
 
     private final PlayerService playerService;
 
-    @Operation(summary = "선수 상세 조회")
+    @Operation(summary = "선수 상세 조회 (스탯 시뮬레이션 포함)",
+            description = "선수 ID로 상세 정보를 조회합니다. grade, adaptation, teamColor 파라미터로 스탯 시뮬레이션이 가능합니다.")
     @GetMapping("/{playerId}")
-    public ResponseEntity<PlayerDetailResponseDto> getPlayerDetails(@PathVariable Long playerId) {
-        PlayerDetailResponseDto responseDto = playerService.findById(playerId);
+    public ResponseEntity<PlayerDetailResponseDto> getPlayerDetails(
+            @PathVariable Long playerId,
+            @RequestParam(defaultValue = "1") int grade,
+            @RequestParam(defaultValue = "1") int adaptation,
+            @RequestParam(defaultValue = "0") int teamColor) {
+
+        PlayerDetailResponseDto responseDto = playerService.getPlayerDetailsWithStats(playerId, grade, adaptation, teamColor);
         return ResponseEntity.ok(responseDto);
     }
 
@@ -40,11 +46,11 @@ public class PlayerController {
 
     @Operation(summary = "선수 검색", description = "다양한 조건으로 선수를 검색합니다. 예: ?name=호날두&teamNames=레알 마드리드&nation=포르투갈")
     @GetMapping("/search")
-    public ResponseEntity<PageResponseDto<PlayerResponseDto>> searchPlayers( // <-- 반환 타입 변경
+    public ResponseEntity<PageResponseDto<PlayerResponseDto>> searchPlayers(
         PlayerSearchConditionDto condition,
         @PageableDefault(size = 10, sort = "stats.overallRating", direction = Sort.Direction.DESC)Pageable pageable) {
 
-        PageResponseDto<PlayerResponseDto> results = playerService.searchPlayers(condition, pageable); // <-- 이제 PageResponseDto를 받음
+        PageResponseDto<PlayerResponseDto> results = playerService.searchPlayers(condition, pageable);
         return ResponseEntity.ok(results);
     }
 }

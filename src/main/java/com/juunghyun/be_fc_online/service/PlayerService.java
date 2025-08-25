@@ -1,6 +1,7 @@
 package com.juunghyun.be_fc_online.service;
 
 import com.juunghyun.be_fc_online.domain.Player;
+import com.juunghyun.be_fc_online.domain.Stat;
 import com.juunghyun.be_fc_online.domain.Team;
 import com.juunghyun.be_fc_online.dto.*;
 import com.juunghyun.be_fc_online.repository.PlayerRepository;
@@ -20,6 +21,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,10 +34,78 @@ public class PlayerService {
     private final TeamRepository teamRepository; // TeamRepository 주입
     private final RestTemplate restTemplate = new RestTemplate();
 
+    // 강화 등급별 스탯 보너스
+    private static final Map<Integer, Integer> GRADE_BONUS = Map.ofEntries(
+            Map.entry(1, 0), Map.entry(2, 1), Map.entry(3, 2),
+            Map.entry(4, 4), Map.entry(5, 6), Map.entry(6, 8),
+            Map.entry(7, 11), Map.entry(8, 15), Map.entry(9, 17),
+            Map.entry(10, 19), Map.entry(11, 21), Map.entry(12, 24),
+            Map.entry(13, 27)
+    );
+
     public PlayerDetailResponseDto findById(Long playerId) {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 선수를 찾을 수 없습니다. id=" + playerId));
         return new PlayerDetailResponseDto(player);
+    }
+
+    public PlayerDetailResponseDto getPlayerDetailsWithStats(Long playerId, int grade, int adaptation, int teamColor) {
+        // 1. DB에서 선수의 기본 정보를 조회합니다.
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 선수를 찾을 수 없습니다. id=" + playerId));
+
+        // 2. 스탯을 계산합니다.
+        Stat calculatedStat = calculateStat(player.getStats(), grade, adaptation, teamColor);
+
+        // 3. 계산된 스탯을 포함하여 DTO를 생성하고 반환합니다.
+        return new PlayerDetailResponseDto(player, calculatedStat);
+    }
+
+    private Stat calculateStat(Stat baseStat, int grade, int adaptation, int teamColor) {
+        // 1. 총 보너스 스탯을 계산합니다.
+        int gradeBonus = GRADE_BONUS.getOrDefault(grade, 0);
+        int adaptationBonus = Math.max(0, adaptation - 1); // 적응도 1은 보너스 0
+        int totalBonus = gradeBonus + adaptationBonus + teamColor;
+
+        // 2. 새로운 Stat 객체를 만들어 반환합니다.
+        return new Stat(
+                baseStat.getOverallRating() + totalBonus,
+                baseStat.getFinishing() + totalBonus,
+                baseStat.getShotPower() + totalBonus,
+                baseStat.getLongShots() + totalBonus,
+                baseStat.getFreekickAccuracy() + totalBonus,
+                baseStat.getHeadingAccuracy() + totalBonus,
+                baseStat.getPositioning() + totalBonus,
+                baseStat.getPenalties() + totalBonus,
+                baseStat.getVolleys() + totalBonus,
+                baseStat.getCurve() + totalBonus,
+                baseStat.getSprintSpeed() + totalBonus,
+                baseStat.getAcceleration() + totalBonus,
+                baseStat.getStamina() + totalBonus,
+                baseStat.getStrength() + totalBonus,
+                baseStat.getJumping() + totalBonus,
+                baseStat.getAgility() + totalBonus,
+                baseStat.getReactions() + totalBonus,
+                baseStat.getBalance() + totalBonus,
+                baseStat.getShortPassing() + totalBonus,
+                baseStat.getLongPassing() + totalBonus,
+                baseStat.getCrossing() + totalBonus,
+                baseStat.getVision() + totalBonus,
+                baseStat.getBallControl() + totalBonus,
+                baseStat.getDribbling() + totalBonus,
+                baseStat.getMarking() + totalBonus,
+                baseStat.getStandingTackle() + totalBonus,
+                baseStat.getSlidingTackle() + totalBonus,
+                baseStat.getAggression() + totalBonus,
+                baseStat.getInterceptions() + totalBonus,
+                baseStat.getComposure() + totalBonus,
+                baseStat.getGkDiving() + totalBonus,
+                baseStat.getGkHandling() + totalBonus,
+                baseStat.getGkKicking() + totalBonus,
+                baseStat.getGkReflexes() + totalBonus,
+                baseStat.getGkPositioning() + totalBonus,
+                baseStat.getSkillMoves() // 개인기는 보너스가 없으므로 그대로 전달
+        );
     }
 
 

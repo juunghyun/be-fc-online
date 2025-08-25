@@ -35,4 +35,18 @@ public class PlayerDetailResponseDto {
                 .map(career -> career.getTeam().getName())
                 .collect(Collectors.toList());
     }
+
+    public PlayerDetailResponseDto(Player player, Stat calculatedStat) {
+        this.id = player.getId();
+        this.playerName = player.getPlayerName();
+        this.season = player.getSeason();
+        this.nation = player.getNation();
+        this.height = player.getHeight();
+        this.weight = player.getWeight();
+        this.salary = player.getSalary();
+        this.careers = player.getCareers().stream()
+                .map(career -> career.getTeam().getName())
+                .collect(Collectors.toList());
+        this.stats = calculatedStat; // 파라미터로 받은 계산된 스탯 사용
+    }
 }
