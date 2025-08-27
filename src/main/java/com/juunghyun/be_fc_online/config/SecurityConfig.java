@@ -53,6 +53,9 @@ public class SecurityConfig {
                                 "/api/v1/auth/**"
                         ).permitAll() // 이 주소들은 모두 허용
                         .requestMatchers(HttpMethod.GET, "/api/v1/players/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/players/{playerId}/comments").permitAll() // 댓글 조회는 누구나
+                        .requestMatchers("/api/v1/comments/**").authenticated() // 댓글 수정/삭제는 인증 필요
+                        .requestMatchers(HttpMethod.POST, "/api/v1/players/{playerId}/comments").authenticated() // 댓글 작성은 인증 필요
                         .requestMatchers("/api/v1/favorites/**").authenticated() // 즐겨찾기 API는 인증 필요
                         .anyRequest().authenticated() // 나머지 모든 요청은 인증 필요
                 )
