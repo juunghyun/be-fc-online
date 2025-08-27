@@ -13,8 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,12 +52,27 @@ public class CommentService {
     // 특정 선수의 댓글 목록 조회
     public List<CommentResponseDto> getComments(Long playerId) {
         Player player = findPlayerById(playerId);
-        // 최상위 댓글(parent가 null인 댓글)만 조회
-        List<Comment> comments = commentRepository.findByPlayerAndParentIsNullOrderByCreatedAtAsc(player);
 
-        return comments.stream()
-                .map(CommentResponseDto::from)
-                .collect(Collectors.toList());
+        // 1. Fetch Join 쿼리를 호출하여 N+1 문제 없이 모든 댓글을 한 번에 가져옵니다.
+        List<Comment> comments = commentRepository.findAllByPlayerWithParent(player);
+
+        // 2. 가져온 댓글 목록을 계층 구조로 재조립합니다.
+        List<CommentResponseDto> result = new ArrayList<>();
+        Map<Long, CommentResponseDto> map = new HashMap<>();
+
+        comments.forEach(c -> {
+            CommentResponseDto dto = CommentResponseDto.from(c);
+            map.put(dto.getCommentId(), dto);
+
+            if (c.getParent() != null) {
+                // 이 댓글이 답글이라면, 부모 댓글의 children 리스트에 추가합니다.
+                map.get(c.getParent().getId()).getChildren().add(dto);
+            } else {
+                // 이 댓글이 최상위 댓글이라면, 최종 결과 리스트에 추가합니다.
+                result.add(dto);
+            }
+        });
+        return result;
     }
 
     // 댓글 수정

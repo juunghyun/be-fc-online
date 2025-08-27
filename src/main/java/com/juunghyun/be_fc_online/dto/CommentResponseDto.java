@@ -4,6 +4,7 @@ import com.juunghyun.be_fc_online.domain.Comment;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +27,9 @@ public class CommentResponseDto {
         this.authorNickname = comment.getUser().getNickname();
         this.createdAt = comment.getCreatedAt();
         // 자식 댓글들도 DTO로 변환하여 리스트에 담습니다.
-        this.children = comment.getChildren().stream()
-                .map(CommentResponseDto::from)
-                .collect(Collectors.toList());
+//        this.children = comment.getChildren().stream()
+//                .map(CommentResponseDto::from)
+//                .collect(Collectors.toList());
+        this.children = new ArrayList<>();
     }
 }
