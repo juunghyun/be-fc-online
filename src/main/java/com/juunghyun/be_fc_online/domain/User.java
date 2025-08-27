@@ -59,6 +59,11 @@ public class User implements UserDetails {
         this.status = UserStatus.ACTIVE; // 생성 시 기본 상태는 ACTIVE
     }
 
+    public void withdraw() {
+        this.status = UserStatus.DELETED;
+        this.refreshToken = null; // 탈퇴 시 리프레시 토큰도 제거
+    }
+
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
