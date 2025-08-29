@@ -63,7 +63,8 @@ public class PlayerRepositoryImpl implements PlayerRepositoryCustom {
     }
 
     private BooleanExpression nameContains(String name) {
-        return hasText(name) ? player.playerName.contains(name) : null;
+        // 이름이 존재하고, 길이가 2 이상일 때만 contains 조건 적용
+        return hasText(name) && name.length() >= 2 ? player.playerName.contains(name) : null;
     }
 
     private BooleanExpression nationEq(String nation) {
