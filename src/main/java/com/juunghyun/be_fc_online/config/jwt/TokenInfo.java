@@ -11,4 +11,5 @@ public class TokenInfo {
     private String grantType; // "Bearer"
     private String accessToken;
     private String refreshToken;
+    private String nickname;
 }
