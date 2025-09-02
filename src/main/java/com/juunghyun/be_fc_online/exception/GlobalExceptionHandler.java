@@ -1,12 +1,14 @@
 package com.juunghyun.be_fc_online.exception;
 
 import com.juunghyun.be_fc_online.dto.ErrorResponseDto;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Hidden
 @RestControllerAdvice // 모든 @RestController에서 발생하는 예외를 가로챕니다.
 public class GlobalExceptionHandler {
 
