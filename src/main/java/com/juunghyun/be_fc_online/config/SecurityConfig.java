@@ -45,6 +45,7 @@ public class SecurityConfig {
 
                 // 2. 경로별 인가(Authorization) 설정
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Preflight 요청은 모두 허용 -> CORS오류 해결
                         .requestMatchers(
                                 "/",
                                 "/swagger-ui.html",
