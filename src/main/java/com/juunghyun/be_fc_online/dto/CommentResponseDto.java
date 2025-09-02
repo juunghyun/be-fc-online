@@ -1,12 +1,12 @@
 package com.juunghyun.be_fc_online.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.juunghyun.be_fc_online.domain.Comment;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 public class CommentResponseDto {
@@ -14,8 +14,13 @@ public class CommentResponseDto {
     private final Long commentId;
     private final String content;
     private final String authorNickname;
+    private final Long authorId;
+    private final Long parentId;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private final LocalDateTime createdAt;
-    private final List<CommentResponseDto> children; // 답글 목록
+
+    private List<CommentResponseDto> children;
 
     public static CommentResponseDto from(Comment comment) {
         return new CommentResponseDto(comment);
@@ -25,11 +30,10 @@ public class CommentResponseDto {
         this.commentId = comment.getId();
         this.content = comment.getContent();
         this.authorNickname = comment.getUser().getNickname();
+        this.authorId = comment.getUser().getId();
+        // 부모 댓글이 있을 경우에만 parentId를 설정하고, 없으면 null로 설정합니다.
+        this.parentId = (comment.getParent() != null) ? comment.getParent().getId() : null; // <-- 4. 부모 댓글 ID 값 설정
         this.createdAt = comment.getCreatedAt();
-        // 자식 댓글들도 DTO로 변환하여 리스트에 담습니다.
-//        this.children = comment.getChildren().stream()
-//                .map(CommentResponseDto::from)
-//                .collect(Collectors.toList());
         this.children = new ArrayList<>();
     }
 }

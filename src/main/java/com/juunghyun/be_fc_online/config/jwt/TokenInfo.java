@@ -12,4 +12,5 @@ public class TokenInfo {
     private String accessToken;
     private String refreshToken;
     private String nickname;
+    private Long userId;
 }
