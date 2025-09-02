@@ -44,6 +44,7 @@ public class AuthService {
                 .accessToken(tokenInfo.getAccessToken())
                 .refreshToken(tokenInfo.getRefreshToken())
                 .nickname(nickname) // 닉네임 추가
+                .userId(user.getId()) // id 추가
                 .build();
     }
 
