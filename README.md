@@ -13,7 +13,7 @@
 ## 📢 Live Demo & API
 
 - 🌐 **웹 서비스:** [https://black-grass-0b86e0300.2.azurestaticapps.net](https://black-grass-0b86e0300.2.azurestaticapps.net)  
-- 📑 **API 명세 (Swagger UI):** [https://be-fc-scouter-app.azurewebsites.net/swagger-ui.html](https://be-fc-scouter-app.azurewebsites.net/swagger-ui.html)
+- 📑 **API 명세 (Swagger UI):** [https://be-fc-scouter-app-djgdgqcgeedhe4fs.southeastasia-01.azurewebsites.net/swagger-ui/index.html#/](https://be-fc-scouter-app-djgdgqcgeedhe4fs.southeastasia-01.azurewebsites.net/swagger-ui/index.html#/)
 
 ---
 
