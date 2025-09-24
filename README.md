@@ -39,7 +39,7 @@ graph TD
 
     A -- HTTPS --> B
     B -- API Request (CORS) --> C
-    C -- JDBC --> D
+    C -- JPA --> D
 ```
 
 ---
