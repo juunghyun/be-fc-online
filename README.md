@@ -27,19 +27,60 @@
 
 ```mermaid
 graph TD
-    subgraph 사용자
+
+    subgraph "사용자"
+
         A[User Browser]
+
     end
 
-    subgraph Azure Cloud
-        B[Static Web Apps: React]
-        C[App Service: Spring Boot]
-        D[MySQL Database]
+
+
+    subgraph "Azure Cloud"
+
+        B["Azure Static Web Apps <br/> (Frontend: React)"]
+
+        subgraph "Azure App Service (Backend)"
+
+            C("Spring Security Filter Chain")
+
+            D[DispatcherServlet]
+
+            E[Controller]
+
+            F[Service]
+
+            G["Repository - JPA/QueryDSL"]
+
+        end
+
+        H[Azure Database for MySQL]
+
     end
+
+
 
     A -- HTTPS --> B
+
     B -- API Request (CORS) --> C
-    C -- JPA --> D
+
+    C -- Token & Role Check --> D
+
+    D -- Routing --> E
+
+    E -- Business Logic Call --> F
+
+    F -- Data Access Call --> G
+
+    G -- SQL Query --> H
+
+    H -- Result --> G
+
+    G -- Entity --> F
+
+    F -- DTO --> E
+
+    E -- ResponseEntity --> B
 ```
 
 ---
